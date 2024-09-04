@@ -100,7 +100,7 @@ export function EnhancedTeaLandingPage() {
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/api/contact', {
+      const response = await fetch('https://sre-nlif.onrender.com/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ export function EnhancedTeaLandingPage() {
   const handleOrderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/api/order', {
+      const response = await fetch('https://sre-nlif.onrender.com/api/order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -144,8 +144,8 @@ export function EnhancedTeaLandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-amber-50 bg-[url('/tea-pattern.png')] bg-repeat bg-opacity-5">
       <header className="w-full bg-white bg-opacity-90 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-          <Link className="flex items-center justify-center" href="#">
+        <div className="container mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between">
+          <Link className="flex items-center justify-center mb-4 sm:mb-0" href="#">
             <span className="sr-only">Sree Rajalakshmi Enterprises</span>
             <svg
               className="h-8 w-8 text-amber-800"
@@ -167,22 +167,22 @@ export function EnhancedTeaLandingPage() {
             </svg>
             <span className="ml-2 text-xl font-bold text-amber-800">Sree Rajalakshmi Enterprises</span>
           </Link>
-          <nav className="flex gap-4 sm:gap-6">
+          <nav className="flex flex-wrap justify-center gap-4">
             <button
               onClick={() => scrollToSection(productsRef)}
-              className="ml-2 text-xl font-bold hover:text-amber-600 transition-colors text-amber-800"
+              className="text-lg font-bold hover:text-amber-600 transition-colors text-amber-800 magnify-effect"
             >
               Products
             </button>
             <button
               onClick={() => scrollToSection(aboutUsRef)}
-              className="ml-2 text-xl font-bold hover:text-amber-600 transition-colors text-amber-800"
+              className="text-lg font-bold hover:text-amber-600 transition-colors text-amber-800 magnify-effect"
             >
               About Us
             </button>
             <button
               onClick={() => setIsContactModalOpen(true)}
-              className="ml-2 text-xl font-bold hover:text-amber-600 transition-colors text-amber-800"
+              className="text-lg font-bold hover:text-amber-600 transition-colors text-amber-800 magnify-effect"
             >
               Contact
             </button>
@@ -367,7 +367,7 @@ export function EnhancedTeaLandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="text-center md:text-left">
               <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
-              <p className="text-sm mb-2">Phone: +91 8668063705</p>
+              <p className="text-sm mb-2">Phone: +91 1234567890</p>
               <p className="text-sm">Email: sreerajalakshmienterprisestea@gmail.com</p>
             </div>
             <div className="text-center ml-10">
@@ -400,7 +400,7 @@ export function EnhancedTeaLandingPage() {
             </div>
           </div>
           <div className="mt-8 border-t border-amber-700 pt-8 text-center ml-10">
-            <p className="text-xs text-amber-200">© 2023 Sree Rajalakshmi Enterprises. All rights reserved.</p>
+            <p className="text-xs text-amber-200">© 2024 Sree Rajalakshmi Enterprises. All rights reserved.</p>
           </div>
         </div>
       </footer>
@@ -474,6 +474,15 @@ export function EnhancedTeaLandingPage() {
           </g>
         </svg>
       </Link>
+      <style jsx global>{`
+        .magnify-effect {
+          display: inline-block;
+          transition: transform 0.3s ease-in-out;
+        }
+        .magnify-effect:hover {
+          transform: scale(1.1);
+        }
+      `}</style>
     </div>
   )
 }
