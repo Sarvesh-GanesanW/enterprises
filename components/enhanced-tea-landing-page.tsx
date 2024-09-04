@@ -189,7 +189,7 @@ export function EnhancedTeaLandingPage() {
                   Discover the Perfect Brew
                 </h1>
                 <p className="mx-auto max-w-[700px] text-amber-700 md:text-xl italic">
-                  "Every cup of tea is a journey through flavors and aromas."
+                &quot;Every cup of tea is a journey through flavors and aromas.&quot;
                 </p>
               </div>
               <Button 
