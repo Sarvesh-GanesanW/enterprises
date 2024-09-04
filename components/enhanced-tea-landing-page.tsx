@@ -11,7 +11,7 @@ import Link from "next/link"
 import Image from 'next/image';
 
 
-const TeaModal = ({ tea, isOpen, setIsOpen }) => (
+const TeaModal = ({ tea, isOpen, setIsOpen }: { tea: Tea, isOpen: boolean, setIsOpen: (isOpen: boolean) => void }) => (
   <Dialog open={isOpen} onOpenChange={setIsOpen}>
     <DialogContent className="sm:max-w-[425px]">
       <DialogHeader>
@@ -45,11 +45,20 @@ type OrderFormData = {
   needSample: boolean;
 };
 
+type Tea = {
+  title: string;
+  description: string;
+  retailPrice: string;
+  wholesalePrice: string;
+  image: string;
+  longDescription: string;
+};
+
 export function EnhancedTeaLandingPage() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
   const productsRef = useRef<HTMLElement>(null);
   const aboutUsRef = useRef<HTMLElement>(null);
-  const [selectedTea, setSelectedTea] = useState(null)
+  const [selectedTea, setSelectedTea] = useState<Tea | null>(null)
 
 
   const scrollToProducts = () => {
@@ -283,7 +292,7 @@ export function EnhancedTeaLandingPage() {
             <TeaModal 
               tea={selectedTea} 
               isOpen={!!selectedTea} 
-              setIsOpen={(isOpen) => !isOpen && setSelectedTea(null)} 
+              setIsOpen={(isOpen: boolean) => !isOpen && setSelectedTea(null)} 
             />
           )}
         </section>
