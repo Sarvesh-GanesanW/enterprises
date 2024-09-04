@@ -3,12 +3,12 @@ import os
 from datetime import datetime
 
 def download_db():
-    url = "https://sre-nlif.onrender.com/download_db"
+    url = "https://sre-ptey.onrender.com/download_db"
     response = requests.get(url)
     
     if response.status_code == 200:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"teashop_{timestamp}.csv"
+        filename = f"teashop_{timestamp}.db"
         with open(filename, 'wb') as f:
             f.write(response.content)
         print(f"Database downloaded as {filename}")
