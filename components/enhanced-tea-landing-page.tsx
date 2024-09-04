@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Checkbox } from "@/components/ui/checkbox"
 import Link from "next/link"
+import Image from 'next/image';
+
 
 const TeaModal = ({ tea, isOpen, setIsOpen }) => (
   <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -16,7 +18,7 @@ const TeaModal = ({ tea, isOpen, setIsOpen }) => (
         <DialogTitle>{tea.title}</DialogTitle>
       </DialogHeader>
       <div className="grid gap-4 py-4">
-        <img src={tea.image} alt={tea.title} className="w-full h-48 object-cover rounded-lg" />
+        <Image src={tea.image} alt={tea.title} width={400} height={200} className="w-full h-48 object-cover rounded-lg" />
         <p className="text-sm text-gray-500">{tea.longDescription}</p>
         <div className="space-y-2">
           <p className="text-center font-medium ">Retail: {tea.retailPrice}</p>
@@ -230,61 +232,61 @@ export function EnhancedTeaLandingPage() {
           </div>
         </section>
         <section id="products" ref={productsRef} className="w-full py-12 md:py-24 lg:py-32 bg-white bg-opacity-80">
-    <div className="container mx-auto px-4 md:px-6">
-      <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-amber-800 text-center mb-12">
-        Our Exquisite Tea Collection
-      </h2>
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {[
-          {
-            title: "Premium Tea",
-            description: "Exquisite blends for the discerning tea connoisseur.",
-            retailPrice: "₹250/100g",
-            wholesalePrice: "₹220/100g (MOQ: 5kg)",
-            image: "/images/premium-tea.jpg",
-            longDescription: "Our Premium Tea is a luxurious blend of the finest tea leaves, carefully selected from the most renowned tea gardens. This exquisite tea offers a rich, full-bodied flavor with subtle notes of oak and a hint of sweetness. Perfect for those special moments when only the best will do."
-          },
-          {
-            title: "Classic Tea",
-            description: "Our everyday blends for a perfect cup anytime.",
-            retailPrice: "₹180/100g",
-            wholesalePrice: "₹160/100g (MOQ: 10kg)",
-            image: "/images/classic-tea.jpg",
-            longDescription: "The Classic Tea is our signature blend, offering a balanced and refreshing taste that's perfect for any time of day. With its smooth flavor and satisfying aroma, this tea is a staple for tea lovers who appreciate consistency and quality in every cup."
-          },
-          {
-            title: "Therapeutic Tea",
-            description: "Specially crafted blends for health and wellness.",
-            retailPrice: "₹230/100g",
-            wholesalePrice: "₹200/100g (MOQ: 5kg)",
-            image: "/images/therapeutic-tea.jpg",
-            longDescription: "Our Therapeutic Tea is a carefully crafted blend designed to promote health and wellness. Infused with natural herbs and spices known for their healing properties, this tea offers a soothing and rejuvenating experience. It's the perfect choice for those looking to incorporate the benefits of traditional herbal remedies into their daily routine."
-          }
-        ].map((product, index) => (
-          <Card key={index} className="bg-amber-50 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
-            <img src={product.image} alt={product.title} className="w-full h-48 object-cover" />
-            <CardContent className="p-6">
-              <h3 className="text-2xl font-bold text-amber-800 mb-2">{product.title}</h3>
-              <p className="text-amber-700 mb-4">{product.description}</p>
-              <Button 
-                onClick={() => setSelectedTea(product)} 
-                className="w-full bg-amber-600 hover:bg-amber-700 text-white"
-              >
-                Learn More
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
-    {selectedTea && (
-      <TeaModal 
-        tea={selectedTea} 
-        isOpen={!!selectedTea} 
-        setIsOpen={(isOpen) => !isOpen && setSelectedTea(null)} 
-      />
-    )}
-  </section>
+          <div className="container mx-auto px-4 md:px-6">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-amber-800 text-center mb-12">
+              Our Exquisite Tea Collection
+            </h2>
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                {
+                  title: "Premium Tea",
+                  description: "Exquisite blends for the discerning tea connoisseur.",
+                  retailPrice: "₹250/100g",
+                  wholesalePrice: "₹220/100g (MOQ: 5kg)",
+                  image: "/images/premium-tea.jpg",
+                  longDescription: "Our Premium Tea is a luxurious blend of the finest tea leaves, carefully selected from the most renowned tea gardens. This exquisite tea offers a rich, full-bodied flavor with subtle notes of oak and a hint of sweetness. Perfect for those special moments when only the best will do."
+                },
+                {
+                  title: "Classic Tea",
+                  description: "Our everyday blends for a perfect cup anytime.",
+                  retailPrice: "₹180/100g",
+                  wholesalePrice: "₹160/100g (MOQ: 10kg)",
+                  image: "/images/classic-tea.jpg",
+                  longDescription: "The Classic Tea is our signature blend, offering a balanced and refreshing taste that&apos;s perfect for any time of day. With its smooth flavor and satisfying aroma, this tea is a staple for tea lovers who appreciate consistency and quality in every cup."
+                },
+                {
+                  title: "Therapeutic Tea",
+                  description: "Specially crafted blends for health and wellness.",
+                  retailPrice: "₹230/100g",
+                  wholesalePrice: "₹200/100g (MOQ: 5kg)",
+                  image: "/images/therapeutic-tea.jpg",
+                  longDescription: "Our Therapeutic Tea is a carefully crafted blend designed to promote health and wellness. Infused with natural herbs and spices known for their healing properties, this tea offers a soothing and rejuvenating experience. It&apos;s the perfect choice for those looking to incorporate the benefits of traditional herbal remedies into their daily routine."
+                }
+              ].map((product, index) => (
+                <Card key={index} className="bg-amber-50 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
+                  <Image src={product.image} alt={product.title} width={400} height={200} className="w-full h-48 object-cover" />
+                  <CardContent className="p-6">
+                    <h3 className="text-2xl font-bold text-amber-800 mb-2">{product.title}</h3>
+                    <p className="text-amber-700 mb-4">{product.description}</p>
+                    <Button 
+                      onClick={() => setSelectedTea(product)} 
+                      className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+                    >
+                      Learn More
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+          {selectedTea && (
+            <TeaModal 
+              tea={selectedTea} 
+              isOpen={!!selectedTea} 
+              setIsOpen={(isOpen) => !isOpen && setSelectedTea(null)} 
+            />
+          )}
+        </section>
         <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-tl from-amber-100 via-amber-50 to-white">
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
