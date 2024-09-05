@@ -1,6 +1,7 @@
 'use client'
 
-import { ShoppingBagIcon, InformationCircleIcon, EnvelopeIcon } from '@heroicons/react/24/outline'
+import * as Collapsible from '@radix-ui/react-collapsible';
+import { ShoppingBagIcon, InformationCircleIcon, EnvelopeIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
 import { CustomDialogContent } from "@/components/ui/custom-dialog"
 import { useState, useRef } from 'react'
 import { Button } from "@/components/ui/button"
@@ -61,6 +62,8 @@ export function EnhancedTeaLandingPage() {
   const productsRef = useRef<HTMLElement>(null);
   const aboutUsRef = useRef<HTMLElement>(null);
   const [selectedTea, setSelectedTea] = useState<Tea | null>(null)
+  const [isFactsOpen, setIsFactsOpen] = useState(false);
+
 
 
   const scrollToProducts = () => {
@@ -222,13 +225,11 @@ export function EnhancedTeaLandingPage() {
           </div>
         </section>
         <section id="about" ref={aboutUsRef} className="w-full py-12 md:py-24 lg:py-32 bg-white bg-opacity-80 relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1/6 bg-contain bg-repeat-y bg-left opacity-10" style={{ backgroundImage: "url('/tea-leaves-left.png')" }}></div>
-        <div className="absolute right-0 top-0 bottom-0 w-1/6 bg-contain bg-repeat-y bg-right opacity-10" style={{ backgroundImage: "url('/tea-leaves-right.png')" }}></div>
-        <div className="container mx-auto px-4 md:px-6 relative">
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-amber-800 text-center mb-8">
-            About Us
-          </h2>
-          <div className="text-amber-700 text-lg text-justify max-w-3xl mx-auto space-y-4">
+          <div className="container mx-auto px-4 md:px-6 relative">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-amber-800 text-center mb-8">
+              About Us
+            </h2>
+            <div className="text-amber-700 text-lg text-justify max-w-3xl mx-auto space-y-4">
               <p>
                 Sree Rajalakshmi Enterprises has been a beacon of quality in the tea industry for four decades. 
                 Our journey began in the lush, verdant tea gardens of South India, where we cultivated a profound 
@@ -251,24 +252,70 @@ export function EnhancedTeaLandingPage() {
                 world of tea.
               </p>
             </div>
-          </div>
-          <div className="mt-12 text-center">
-            <h3 className="text-2xl font-semibold text-amber-800 mb-4">Ready to Experience Our Legacy?</h3>
-            <Button 
-              onClick={scrollToProducts}
-              className="bg-amber-600 hover:bg-amber-700 text-white rounded-full text-lg px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              Explore Our Teas
-            </Button>
-          </div>
-          <div className="absolute left-4 ml-20 top-1/2 transform -translate-y-1/2 w-72 h-72 bg-amber-50 bg-opacity-80 rounded-lg shadow-lg flex items-center justify-center">
-            <div className="text-center p-8 border-l-4 border-amber-700">
-              <p className="text-amber-900 text-xl font-serif italic">&quot;Tea is the second most consumed beverage in the world after water.&quot;</p>
+            <div className="mt-8">
+              <Collapsible.Root open={isFactsOpen} onOpenChange={setIsFactsOpen}>
+                <Collapsible.Trigger className="flex items-center justify-center w-1/4 mx-auto py-2 px-4 bg-amber-100 text-amber-800 rounded-lg hover:bg-amber-200 transition-colors">
+                  <span className="mr-2">{isFactsOpen ? 'Hide' : 'Show'} Tea Facts</span>
+                  {isFactsOpen ? (
+                    <ChevronUpIcon className="h-5 w-5" />
+                  ) : (
+                    <ChevronDownIcon className="h-5 w-5" />
+                  )}
+                </Collapsible.Trigger>
+                <Collapsible.Content className="mt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-amber-50 bg-opacity-80 rounded-lg shadow-lg px-2 py-4">
+                      <p className="text-amber-900 text-sm font-serif italic text-center">
+                        &quot;Tea is the second most consumed beverage in the world after water.&quot;
+                      </p>
+                    </div>
+                    <div className="bg-amber-50 bg-opacity-80 rounded-lg shadow-lg px-2 py-4">
+                      <p className="text-amber-900 text-sm font-serif italic text-center">
+                        &quot;Tea is the only beverage commonly served hot or iced, anytime, anywhere, for any occasion.&quot;
+                      </p>
+                    </div>
+                  </div>
+                </Collapsible.Content>
+              </Collapsible.Root>
             </div>
-          </div>
-          <div className="absolute right-4 mr-20 top-1/2 transform -translate-y-1/2 w-72 h-72 bg-amber-50 bg-opacity-80 rounded-lg shadow-lg flex items-center justify-center">
-            <div className="text-center p-8 border-l-4 border-amber-700">
-              <p className="text-amber-900 text-xl font-serif italic">&quot;There are over 3,000 varieties of tea in the world.&quot;</p>
+            <div className="mt-12 text-center">
+              <h3 className="text-2xl font-semibold text-amber-800 mb-4">Ready to Experience Our Legacy?</h3>
+              <Button 
+                onClick={scrollToProducts}
+                className="bg-amber-600 hover:bg-amber-700 text-white rounded-full text-lg px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Explore Our Teas
+              </Button>
+              <div className="mt-40 w-full flex justify-center">
+                {/* Tea Cup SVG */}
+                <svg
+                  height="200px"
+                  width="200px"
+                  version="1.1"
+                  id="Layer_1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlnsXlink="http://www.w3.org/1999/xlink"
+                  viewBox="-51.2 -51.2 614.40 614.40"
+                  xmlSpace="preserve"
+                  fill="#ff4c38"
+                  stroke="#ff4c38"
+                  strokeWidth="0.00512"
+                  transform="matrix(-1, 0, 0, -1, 0, 0)rotate(0)"
+                >
+                  <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                  <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" stroke="#CCCCCC" strokeWidth="2.048"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path style={{ fill: "#A1A1A1" }} d="M460.358,83.849L436.489,12.24C434.052,4.93,427.211,0,419.506,0H92.494 c-7.706,0-14.546,4.93-16.983,12.24L51.642,83.849c-0.609,1.826-0.919,3.737-0.919,5.662v334.172c0,1.955,0.32,3.897,0.948,5.747 l23.869,70.415C78.003,507.112,84.823,512,92.494,512h327.012c7.673,0,14.492-4.888,16.954-12.156l23.869-70.415 c0.627-1.851,0.948-3.793,0.948-5.747V89.51C461.277,87.587,460.967,85.675,460.358,83.849z"></path>
+                    <path style={{ fill: "#D6D6D6" }} d="M256,0H92.494c-7.706,0-14.546,4.93-16.983,12.24L51.642,83.849 c-0.609,1.826-0.919,3.737-0.919,5.662v334.172c0,1.955,0.32,3.897,0.948,5.747l23.869,70.415C78.003,507.112,84.823,512,92.494,512 H256V0z"></path>
+                    <path style={{ fill: "#DE9833" }} d="M51.67,429.43l23.869,70.415C78.003,507.112,84.823,512,92.494,512h327.012 c7.673,0,14.492-4.888,16.954-12.156l23.869-70.415c0.627-1.851,0.948-3.793,0.948-5.747H50.723 C50.723,425.638,51.042,427.58,51.67,429.43z"></path>
+                    <path style={{ fill: "#F3A938" }} d="M51.67,429.43l23.869,70.415C78.003,507.112,84.823,512,92.494,512H256v-88.317H50.723 C50.723,425.638,51.042,427.58,51.67,429.43z"></path>
+                    <path style={{ fill: "#DE9833" }} d="M460.358,83.849L436.489,12.24C434.052,4.93,427.211,0,419.506,0H92.494 c-7.706,0-14.546,4.93-16.983,12.24L51.642,83.849c-0.609,1.826-0.919,3.737-0.919,5.662h410.555 C461.277,87.587,460.967,85.675,460.358,83.849z"></path>
+                    <path style={{ fill: "#F3A938" }} d="M256,0H92.494c-7.706,0-14.546,4.93-16.983,12.24L51.642,83.849 c-0.609,1.826-0.919,3.737-0.919,5.662H256V0z"></path>
+                    <path style={{ fill: "#DE9833" }} d="M290.342,290.342c23.146-23.146,28.781-57.16,16.929-85.613 c-28.452-11.851-62.466-6.217-85.613,16.929s-28.781,57.16-16.929,85.613C233.181,319.122,267.195,313.488,290.342,290.342z"></path>
+                    <path style={{ fill: "#F3A938" }} d="M255.996,201.579c-12.576,3.498-24.449,10.19-34.339,20.08 c-23.146,23.146-28.781,57.16-16.929,85.613c16.294,6.787,34.414,7.839,51.27,3.151L255.996,201.579z"></path>
+                  </g>
+                </svg>
+              </div>
             </div>
           </div>
         </section>
@@ -321,7 +368,7 @@ export function EnhancedTeaLandingPage() {
             </div>
           </div>
           {selectedTea && (
-            <TeaModal 
+                        <TeaModal 
               tea={selectedTea} 
               isOpen={!!selectedTea} 
               setIsOpen={(isOpen: boolean) => !isOpen && setSelectedTea(null)} 
@@ -495,8 +542,7 @@ export function EnhancedTeaLandingPage() {
               c1.86-2.164,2.688-3.844,3.648-5.79l0.503-1.011c2.344-4.657,0.342-8.587-0.305-9.856c-0.531-1.062-10.012-23.944-11.02-26.348
               c-2.424-5.801-5.627-8.502-10.078-8.502c-0.413,0,0,0-1.732,0.073c-2.109,0.089-13.594,1.601-18.672,4.802
               c-5.385,3.395-14.495,14.217-14.495,33.249c0,17.129,10.87,33.302,15.537,39.453c0.116,0.155,0.329,0.47,0.638,0.922
-              c17.873,26.102,40.154,45.446,62.741,54.469c21.745,8.686,32.042,9.69,37.896,9.69c0.001,0,0.001,0,0.001,0
-              c2.46,0,4.429-0.193,6.166-0.364l1.102-0.105c7.512-0.666,24.02-9.22,27.775-19.655c2.958-8.219,3.738-17.199,1.77-20.458
+              c17.873,26.102,40.154,45.446,62.741,54.469c21.745,8.686,32.042,              c2.46,0,4.429-0.193,6.166-0.364l1.102-0.105c7.512-0.666,24.02-9.22,27.775-19.655c2.958-8.219,3.738-17.199,1.77-20.458
               C233.168,179.508,230.845,178.393,227.904,176.981z"/>
             <path id="XMLID_470_" d="M156.734,0C73.318,0,5.454,67.354,5.454,150.143c0,26.777,7.166,52.988,20.741,75.928L0.212,302.716
               c-0.484,1.429-0.124,3.009,0.933,4.085C1.908,307.58,2.943,308,4,308c0.405,0,0.813-0.061,1.211-0.188l79.92-25.396
