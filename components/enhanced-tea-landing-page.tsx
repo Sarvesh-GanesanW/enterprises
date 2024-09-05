@@ -15,7 +15,7 @@ import Image from 'next/image';
 
 const TeaModal = ({ tea, isOpen, setIsOpen }: { tea: Tea, isOpen: boolean, setIsOpen: (isOpen: boolean) => void }) => (
   <Dialog open={isOpen} onOpenChange={setIsOpen}>
-    <CustomDialogContent className="sm:max-w-[425px]" showCloseButton={false}>
+    <CustomDialogContent className="sm:max-w-[425px]">
       <DialogHeader>
         <DialogTitle>{tea.title}</DialogTitle>
       </DialogHeader>
