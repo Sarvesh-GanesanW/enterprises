@@ -102,7 +102,7 @@ export function EnhancedTeaLandingPage() {
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://sre-ptey.onrender.com/api/contact', {
+      const response = await fetch('https://sretea.onrender.com/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ export function EnhancedTeaLandingPage() {
   const handleOrderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://sre-ptey.onrender.com/api/order', {
+      const response = await fetch('https://sretea.onrender.com/api/order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
