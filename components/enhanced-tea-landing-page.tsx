@@ -451,7 +451,7 @@ export function EnhancedTeaLandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="text-center md:text-left">
               <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
-              <p className="text-sm mb-2">Phone: +91 9710522400</p>
+              <p className="text-sm mb-2">Phone: +91 8778635551</p>
               <p className="text-sm">Email: sreerajalakshmienterprisestea@gmail.com</p>
             </div>
             <div className="text-center ml-10">
@@ -526,7 +526,7 @@ export function EnhancedTeaLandingPage() {
         </DialogContent>
       </Dialog>
       <Link
-        href="https://wa.me/919710522400"
+        href="https://wa.me/918778635551"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-4 right-4 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition-colors"
