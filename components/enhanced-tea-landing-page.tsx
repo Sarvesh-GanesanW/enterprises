@@ -1,5 +1,7 @@
 'use client'
 
+import { ShoppingBagIcon, InformationCircleIcon, EnvelopeIcon } from '@heroicons/react/24/outline'
+import { CustomDialogContent } from "@/components/ui/custom-dialog"
 import { useState, useRef } from 'react'
 import { Button } from "@/components/ui/button"
 import { CardContent, Card } from "@/components/ui/card"
@@ -13,7 +15,7 @@ import Image from 'next/image';
 
 const TeaModal = ({ tea, isOpen, setIsOpen }: { tea: Tea, isOpen: boolean, setIsOpen: (isOpen: boolean) => void }) => (
   <Dialog open={isOpen} onOpenChange={setIsOpen}>
-    <DialogContent className="sm:max-w-[425px]">
+    <CustomDialogContent className="sm:max-w-[425px]" showCloseButton={false}>
       <DialogHeader>
         <DialogTitle>{tea.title}</DialogTitle>
       </DialogHeader>
@@ -26,7 +28,7 @@ const TeaModal = ({ tea, isOpen, setIsOpen }: { tea: Tea, isOpen: boolean, setIs
         </div>
       </div>
       <Button onClick={() => setIsOpen(false)} className="w-full bg-amber-600 hover:bg-amber-700 text-white">Close</Button>
-    </DialogContent>
+    </CustomDialogContent>
   </Dialog>
 )
 
@@ -142,7 +144,7 @@ export function EnhancedTeaLandingPage() {
 
 
   return (
-    <div className="flex flex-col min-h-screen bg-amber-50 bg-[url('/tea-pattern.png')] bg-repeat bg-opacity-5">
+    <div className="flex flex-col min-h-screen bg-amber-50 bg-[url('/tea-pattern.png')] bg-repeat bg-opacity-5 font-fat">
       <header className="w-full bg-white bg-opacity-90 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between">
           <Link className="flex items-center justify-center mb-4 sm:mb-0" href="#">
@@ -167,26 +169,35 @@ export function EnhancedTeaLandingPage() {
             </svg>
             <span className="ml-2 text-xl font-bold text-amber-800">Sree Rajalakshmi Enterprises</span>
           </Link>
-          <nav className="flex flex-wrap justify-center gap-4">
-            <button
-              onClick={() => scrollToSection(productsRef)}
-              className="text-lg font-bold hover:text-amber-600 transition-colors text-amber-800 magnify-effect"
-            >
-              Products
-            </button>
-            <button
-              onClick={() => scrollToSection(aboutUsRef)}
-              className="text-lg font-bold hover:text-amber-600 transition-colors text-amber-800 magnify-effect"
-            >
-              About Us
-            </button>
-            <button
-              onClick={() => setIsContactModalOpen(true)}
-              className="text-lg font-bold hover:text-amber-600 transition-colors text-amber-800 magnify-effect"
-            >
-              Contact
-            </button>
-          </nav>
+          <nav className="flex justify-center items-center space-x-8">
+      <button
+        onClick={() => scrollToSection(productsRef)}
+        className="flex items-center text-lg font-bold hover:text-amber-600 transition-colors text-amber-800 magnify-effect"
+      >
+        <span className="flex items-center">
+          <ShoppingBagIcon className="h-6 w-6 mr-2" />
+          Products
+        </span>
+      </button>
+      <button
+        onClick={() => scrollToSection(aboutUsRef)}
+        className="flex items-center text-lg font-bold hover:text-amber-600 transition-colors text-amber-800 magnify-effect"
+      >
+        <span className="flex items-center">
+          <InformationCircleIcon className="h-6 w-6 mr-2" />
+          About Us
+        </span>
+      </button>
+      <button
+        onClick={() => setIsContactModalOpen(true)}
+        className="flex items-center text-lg font-bold hover:text-amber-600 transition-colors text-amber-800 magnify-effect"
+      >
+        <span className="flex items-center">
+          <EnvelopeIcon className="h-6 w-6 mr-2" />
+          Contact
+        </span>
+      </button>
+    </nav>
         </div>
       </header>
       <main className="flex-1">
@@ -210,12 +221,14 @@ export function EnhancedTeaLandingPage() {
             </div>
           </div>
         </section>
-        <section id="about" ref={aboutUsRef} className="w-full py-12 md:py-24 lg:py-32 bg-white bg-opacity-80">
-          <div className="container mx-auto px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-amber-800 text-center mb-8">
-              About Us
-            </h2>
-            <div className="text-amber-700 text-lg text-justify max-w-3xl mx-auto space-y-4">
+        <section id="about" ref={aboutUsRef} className="w-full py-12 md:py-24 lg:py-32 bg-white bg-opacity-80 relative overflow-hidden">
+        <div className="absolute left-0 top-0 bottom-0 w-1/6 bg-contain bg-repeat-y bg-left opacity-10" style={{ backgroundImage: "url('/tea-leaves-left.png')" }}></div>
+        <div className="absolute right-0 top-0 bottom-0 w-1/6 bg-contain bg-repeat-y bg-right opacity-10" style={{ backgroundImage: "url('/tea-leaves-right.png')" }}></div>
+        <div className="container mx-auto px-4 md:px-6 relative">
+          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-amber-800 text-center mb-8">
+            About Us
+          </h2>
+          <div className="text-amber-700 text-lg text-justify max-w-3xl mx-auto space-y-4">
               <p>
                 Sree Rajalakshmi Enterprises has been a beacon of quality in the tea industry for four decades. 
                 Our journey began in the lush, verdant tea gardens of South India, where we cultivated a profound 
@@ -239,6 +252,25 @@ export function EnhancedTeaLandingPage() {
               </p>
             </div>
           </div>
+          <div className="mt-12 text-center">
+            <h3 className="text-2xl font-semibold text-amber-800 mb-4">Ready to Experience Our Legacy?</h3>
+            <Button 
+              onClick={scrollToProducts}
+              className="bg-amber-600 hover:bg-amber-700 text-white rounded-full text-lg px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              Explore Our Teas
+            </Button>
+          </div>
+          <div className="absolute left-4 ml-20 top-1/2 transform -translate-y-1/2 w-72 h-72 bg-amber-50 bg-opacity-80 rounded-lg shadow-lg flex items-center justify-center">
+            <div className="text-center p-8 border-l-4 border-amber-700">
+              <p className="text-amber-900 text-xl font-serif italic">&quot;Tea is the second most consumed beverage in the world after water.&quot;</p>
+            </div>
+          </div>
+          <div className="absolute right-4 mr-20 top-1/2 transform -translate-y-1/2 w-72 h-72 bg-amber-50 bg-opacity-80 rounded-lg shadow-lg flex items-center justify-center">
+            <div className="text-center p-8 border-l-4 border-amber-700">
+              <p className="text-amber-900 text-xl font-serif italic">&quot;There are over 3,000 varieties of tea in the world.&quot;</p>
+            </div>
+          </div>
         </section>
         <section id="products" ref={productsRef} className="w-full py-12 md:py-24 lg:py-32 bg-white bg-opacity-80">
           <div className="container mx-auto px-4 md:px-6">
@@ -257,11 +289,11 @@ export function EnhancedTeaLandingPage() {
                 },
                 {
                   title: "Classic Tea",
-                  description: "Our everyday blends for a perfect cup anytime.",
+                  description: "Our everyday blends for a perfect cup anytime, anywhere.",
                   retailPrice: "₹180/100g",
                   wholesalePrice: "₹160/100g (MOQ: 10kg)",
                   image: "/images/classic-tea.jpg",
-                  longDescription: "The Classic Tea is our signature blend, offering a balanced and refreshing taste that&apos;s perfect for any time of day. With its smooth flavor and satisfying aroma, this tea is a staple for tea lovers who appreciate consistency and quality in every cup."
+                  longDescription: "The Classic Tea is our signature blend, offering a balanced and refreshing taste that is perfect for any time of day. With its smooth flavor and satisfying aroma, this tea is a staple for tea lovers who appreciate consistency and quality in every cup."
                 },
                 {
                   title: "Therapeutic Tea",
@@ -279,7 +311,7 @@ export function EnhancedTeaLandingPage() {
                     <p className="text-amber-700 mb-4">{product.description}</p>
                     <Button 
                       onClick={() => setSelectedTea(product)} 
-                      className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+                      className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white text-sm mt-2 py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 border-2 border-amber-700 hover:border-amber-800 animate-pulse-slow"
                     >
                       Learn More
                     </Button>
@@ -341,6 +373,8 @@ export function EnhancedTeaLandingPage() {
                       name="requirements"
                       value={orderFormData.requirements}
                       onChange={handleOrderInputChange}
+                      disabled={orderFormData.needSample}
+                      className={orderFormData.needSample ? "bg-gray-100 text-gray-500" : ""}
                     />
                     <div className="flex items-center space-x-2">
                       <Checkbox
