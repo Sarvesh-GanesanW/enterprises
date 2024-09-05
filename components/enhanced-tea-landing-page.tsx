@@ -401,13 +401,13 @@ export function EnhancedTeaLandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="text-center md:text-left">
               <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
-              <p className="text-sm mb-2">Phone: +91 1234567890</p>
+              <p className="text-sm mb-2">Phone: +91 9710522400</p>
               <p className="text-sm">Email: sreerajalakshmienterprisestea@gmail.com</p>
             </div>
             <div className="text-center ml-10">
               <h3 className="text-xl font-semibold mb-4">Visit Us</h3>
-              <p className="text-sm">123 Tea Street, Coimbatore,</p>
-              <p className="text-sm">Tamil Nadu, India</p>
+              <p className="text-sm">V.R. Pillai Street, Triplicane,</p>
+              <p className="text-sm">Chennai, Tamil Nadu, India</p>
             </div>
             <div className="text-center md:text-right">
               <h3 className="text-xl font-semibold mb-4">Follow Us</h3>
@@ -476,7 +476,7 @@ export function EnhancedTeaLandingPage() {
         </DialogContent>
       </Dialog>
       <Link
-        href="https://wa.me/8668063705"
+        href="https://wa.me/9710522400"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-4 right-4 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition-colors"
