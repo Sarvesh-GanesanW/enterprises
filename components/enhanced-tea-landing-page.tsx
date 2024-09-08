@@ -1,22 +1,23 @@
 'use client'
 
 import * as Collapsible from '@radix-ui/react-collapsible';
-import { ShoppingBagIcon, InformationCircleIcon, EnvelopeIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
-import { CustomDialogContent } from "@/components/ui/custom-dialog"
-import { useState, useRef } from 'react'
-import { Button } from "@/components/ui/button"
-import { CardContent, Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Checkbox } from "@/components/ui/checkbox"
-import Link from "next/link"
+import { ShoppingBagIcon, InformationCircleIcon, EnvelopeIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { CustomDialogContent } from "@/components/ui/custom-dialog";
+import { useState, useRef, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { CardContent, Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
 import Image from 'next/image';
 
+const API_URL = 'https://sretea.onrender.com/api';
 
-const TeaModal = ({ tea, isOpen, setIsOpen }: { tea: Tea, isOpen: boolean, setIsOpen: (isOpen: boolean) => void }) => (
+const TeaModal = ({ tea, isOpen, setIsOpen, addToCart }: { tea: Tea, isOpen: boolean, setIsOpen: (isOpen: boolean) => void, addToCart: (tea: Tea) => void }) => (
   <Dialog open={isOpen} onOpenChange={setIsOpen}>
-    <CustomDialogContent className="sm:max-w-[425px]">
+    <DialogContent className="sm:max-w-[425px]">
       <DialogHeader>
         <DialogTitle>{tea.title}</DialogTitle>
       </DialogHeader>
@@ -24,12 +25,15 @@ const TeaModal = ({ tea, isOpen, setIsOpen }: { tea: Tea, isOpen: boolean, setIs
         <Image src={tea.image} alt={tea.title} width={400} height={200} className="w-full h-48 object-cover rounded-lg" />
         <p className="text-sm text-gray-500">{tea.longDescription}</p>
         <div className="space-y-2">
-          <p className="text-center font-medium ">Retail: {tea.retailPrice}</p>
+          <p className="text-center font-medium">Retail: {tea.retailPrice}</p>
           <p className="text-center font-medium">Wholesale: {tea.wholesalePrice}</p>
         </div>
       </div>
-      <Button onClick={() => setIsOpen(false)} className="w-full bg-amber-600 hover:bg-amber-700 text-white">Close</Button>
-    </CustomDialogContent>
+      <div className="flex space-x-2">
+        <Button onClick={() => addToCart(tea)} className="flex-1 bg-green-600 hover:bg-green-700 text-white">Add to Cart</Button>
+        <Button onClick={() => setIsOpen(false)} className="flex-1 bg-amber-600 hover:bg-amber-700 text-white">Close</Button>
+      </div>
+    </DialogContent>
   </Dialog>
 )
 
@@ -63,8 +67,43 @@ export function EnhancedTeaLandingPage() {
   const aboutUsRef = useRef<HTMLElement>(null);
   const [selectedTea, setSelectedTea] = useState<Tea | null>(null)
   const [isFactsOpen, setIsFactsOpen] = useState(false);
+  const [cart, setCart] = useState<Tea[]>([]);
 
 
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  const fetchCart = async () => {
+    try {
+      const response = await fetch(`${API_URL}/cart`);
+      if (response.ok) {
+        const cartData = await response.json();
+        setCart(cartData);
+      }
+    } catch (error) {
+      console.error('Error fetching cart:', error);
+    }
+  };
+
+
+  const addToCart = async (tea: Tea) => {
+    try {
+      const response = await fetch(`${API_URL}/cart`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(tea),
+      });
+      if (response.ok) {
+        fetchCart();
+        setSelectedTea(null);
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
+  };
 
   const scrollToProducts = () => {
     productsRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -105,7 +144,7 @@ export function EnhancedTeaLandingPage() {
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://sretea.onrender.com/api/contact', {
+      const response = await fetch(`${API_URL}/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +166,7 @@ export function EnhancedTeaLandingPage() {
   const handleOrderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://sretea.onrender.com/api/order', {
+      const response = await fetch(`${API_URL}/order`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -203,6 +242,12 @@ export function EnhancedTeaLandingPage() {
     </nav>
         </div>
       </header>
+      <Link href="/cart" className="fixed top-4 right-4 z-50">
+        <Button className="bg-amber-600 hover:bg-amber-700 text-white rounded-full px-4 py-2">
+          <ShoppingBagIcon className="h-6 w-6 mr-2" />
+          Cart ({cart.length})
+        </Button>
+      </Link>
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-br from-amber-100 via-amber-50 to-white">
           <div className="container mx-auto px-4 md:px-6">
@@ -212,7 +257,7 @@ export function EnhancedTeaLandingPage() {
                   Discover the Perfect Brew
                 </h1>
                 <div className="flex justify-center">
-                  <svg fill="#FFBF00" height="200px" width="200px" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 470" xmlnsXlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 470 470" stroke="#FFBF00"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="m180.568,70.396c0.058,0.398 0.138,0.789 0.256,1.164 3.687,16.088 11.315,30.431 22.661,41.777 16.574,16.575 39.534,25.229 65.001,25.228 12.017,0 24.597-1.93 37.319-5.863 0.066-0.02 0.088-0.025 0.11-0.032 0.046-0.014 0.089-0.036 0.134-0.051 0.211-0.07 0.42-0.148 0.626-0.237 0.08-0.035 0.158-0.073 0.237-0.11 0.178-0.085 0.354-0.177 0.527-0.277 0.078-0.045 0.156-0.089 0.231-0.137 0.172-0.108 0.338-0.225 0.502-0.348 0.064-0.048 0.131-0.092 0.193-0.142 0.217-0.173 0.427-0.357 0.628-0.557 0.206-0.205 0.391-0.418 0.565-0.637 0.046-0.058 0.087-0.12 0.131-0.179 0.128-0.17 0.249-0.343 0.36-0.521 0.044-0.07 0.084-0.142 0.126-0.213 0.105-0.181 0.202-0.365 0.291-0.552 0.033-0.071 0.067-0.14 0.099-0.212 0.096-0.221 0.18-0.444 0.254-0.671 0.011-0.034 0.027-0.066 0.038-0.1 0.005-0.016 0.009-0.033 0.014-0.05 0.008-0.027 0.016-0.055 0.024-0.083 3.829-12.393 5.799-24.802 5.852-36.887 0.019-4.143-3.325-7.515-7.467-7.533-4.16,0-7.515,3.336-7.533,7.467-0.029,6.635-0.736,13.404-2.083,20.229l-44.66-44.66v-46.446c9.865,3.487 18.664,8.89 25.913,16.139 7.588,7.589 13.21,16.822 16.71,27.443 1.296,3.933 5.534,6.074 9.471,4.775 3.934-1.296 6.072-5.536 4.775-9.471-4.24-12.869-11.087-24.091-20.35-33.354-11.343-11.345-25.687-18.973-41.775-22.66-0.373-0.117-0.762-0.197-1.158-0.254-18.211-3.939-38.596-2.873-59.379,3.55-0.019,0.006-0.038,0.011-0.057,0.017-0.019,0.006-0.039,0.011-0.058,0.017-0.037,0.011-0.072,0.029-0.108,0.041-0.224,0.073-0.445,0.156-0.662,0.251-0.072,0.031-0.142,0.065-0.213,0.099-0.188,0.089-0.373,0.186-0.555,0.292-0.07,0.04-0.139,0.08-0.208,0.123-0.183,0.114-0.36,0.238-0.534,0.37-0.054,0.041-0.111,0.078-0.164,0.12-0.22,0.175-0.434,0.361-0.638,0.565-0.204,0.204-0.39,0.419-0.566,0.639-0.041,0.051-0.077,0.105-0.116,0.157-0.134,0.177-0.26,0.357-0.376,0.543-0.041,0.065-0.079,0.132-0.117,0.199-0.108,0.186-0.208,0.376-0.299,0.569-0.031,0.066-0.063,0.132-0.093,0.199-0.099,0.226-0.186,0.456-0.261,0.689-0.01,0.03-0.024,0.058-0.033,0.088-0.022,0.073-0.03,0.1-0.037,0.127-6.42,20.776-7.485,41.154-3.548,59.36zm48.829-8.58h-35.141c-1.592-10.684-1.262-22.189 1.081-34.059l34.06,34.059zm-15.306,40.914c-7.249-7.249-12.653-16.048-16.14-25.914h46.447l44.668,44.668c-29.65,5.852-57.043-0.822-74.975-18.754zm25.915-86.661v35.14l-34.06-34.06c11.87-2.342 23.375-2.672 34.06-1.08z"></path> <path d="m87.5,358.574h40.632c31.729,32.271 73.988,50 119.367,50 92.359,0 167.5-75.141 167.5-167.5v-80c0-4.143-3.357-7.5-7.5-7.5h-320c-4.143,0-7.5,3.357-7.5,7.5v22.814c-20.545,1.732-39.627,10.567-54.372,25.313-16.525,16.527-25.627,38.501-25.627,61.873s9.102,45.345 25.629,61.872c16.527,16.526 38.5,25.628 61.871,25.628zm-51.266-138.766c13.691-13.693 31.897-21.234 51.265-21.234 4.143,0 7.5-3.357 7.5-7.5v-22.5h305v72.5c0,84.089-68.411,152.5-152.5,152.5-42.304,0-81.631-16.925-110.737-47.657-1.416-1.496-3.386-2.343-5.445-2.343h-43.817c-19.364,0-37.57-7.541-51.265-21.235-13.694-13.694-21.235-31.9-21.235-51.265 0-19.366 7.541-37.572 21.234-51.266z"></path> <path d="m87.5,328.574h21.409c2.681,0 5.157-1.431 6.497-3.753 1.339-2.322 1.337-5.183-0.005-7.503-13.348-23.073-20.402-49.438-20.402-76.244v-20c0-4.143-3.357-7.5-7.5-7.5-15.359,0-29.799,5.981-40.658,16.841-10.86,10.86-16.841,25.3-16.841,40.659 0,15.358 5.981,29.798 16.842,40.659 10.86,10.859 25.3,16.841 40.658,16.841zm-30.052-87.553c6.229-6.229 14.053-10.287 22.551-11.792v11.845c0,25.169 5.665,49.986 16.473,72.5h-8.972c-11.352,0-22.024-4.421-30.051-12.448-8.028-8.028-12.449-18.701-12.449-30.052 0-11.353 4.421-22.025 12.448-30.053z"></path> <path d="m247.498,378.574c31.291,0 60.795-10.287 85.324-29.75 3.244-2.574 3.788-7.292 1.213-10.537-2.574-3.244-7.292-3.787-10.537-1.213-21.849,17.336-48.13,26.5-76,26.5-67.547,0-122.5-54.953-122.5-122.5l.001-42.204c9.815,0.83 15.565,3.307 22.03,6.092 8.282,3.568 17.67,7.612 35.466,7.612 17.797,0 27.185-4.044 35.467-7.612 7.958-3.428 14.829-6.388 29.532-6.388 14.704,0 21.576,2.96 29.534,6.388 8.282,3.568 17.671,7.612 35.468,7.612s27.185-4.044 35.468-7.611c6.467-2.786 12.217-5.263 22.035-6.093l-.001,42.204c0,27.871-9.164,54.151-26.5,76-2.575,3.245-2.031,7.963 1.213,10.537 3.244,2.575 7.962,2.031 10.537-1.213 19.463-24.528 29.75-54.033 29.75-85.324l.001-50c0-1.989-0.79-3.896-2.196-5.304-1.407-1.406-3.314-2.196-5.304-2.196-17.798,0-27.186,4.044-35.469,7.612-7.958,3.428-14.83,6.388-29.534,6.388s-21.576-2.96-29.534-6.388c-8.282-3.568-17.671-7.612-35.468-7.612-17.796,0-27.184,4.044-35.466,7.612-7.958,3.428-14.83,6.388-29.533,6.388-14.702,0-21.574-2.96-29.53-6.388-8.282-3.568-17.67-7.612-35.466-7.612-4.142,0-7.5,3.357-7.5,7.5l-.001,50c-9.9476e-14,75.817 61.683,137.5 137.5,137.5z"></path> <path d="m462.5,419.924h-430c-4.143,0-7.5,3.357-7.5,7.5s3.357,7.5 7.5,7.5h4.342l4.326,15.138c3.182,11.138 14.748,19.862 26.332,19.862h360c11.584,0 23.15-8.725 26.333-19.862l4.325-15.138h4.342c4.143,0 7.5-3.357 7.5-7.5s-3.357-7.5-7.5-7.5zm-23.09,26.016c-1.344,4.701-7.021,8.983-11.91,8.983h-360c-4.89,0-10.566-4.282-11.909-8.983l-3.147-11.017h390.114l-3.148,11.017z"></path> </g> </g></svg>
+                  <svg fill="#FFBF00" height="200px" width="200px" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 470" xmlnsXlink="http://www.w3.org/1999/xlink" enableBackground="new 0 0 470 470" stroke="#FFBF00"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="m180.568,70.396c0.058,0.398 0.138,0.789 0.256,1.164 3.687,16.088 11.315,30.431 22.661,41.777 16.574,16.575 39.534,25.229 65.001,25.228 12.017,0 24.597-1.93 37.319-5.863 0.066-0.02 0.088-0.025 0.11-0.032 0.046-0.014 0.089-0.036 0.134-0.051 0.211-0.07 0.42-0.148 0.626-0.237 0.08-0.035 0.158-0.073 0.237-0.11 0.178-0.085 0.354-0.177 0.527-0.277 0.078-0.045 0.156-0.089 0.231-0.137 0.172-0.108 0.338-0.225 0.502-0.348 0.064-0.048 0.131-0.092 0.193-0.142 0.217-0.173 0.427-0.357 0.628-0.557 0.206-0.205 0.391-0.418 0.565-0.637 0.046-0.058 0.087-0.12 0.131-0.179 0.128-0.17 0.249-0.343 0.36-0.521 0.044-0.07 0.084-0.142 0.126-0.213 0.105-0.181 0.202-0.365 0.291-0.552 0.033-0.071 0.067-0.14 0.099-0.212 0.096-0.221 0.18-0.444 0.254-0.671 0.011-0.034 0.027-0.066 0.038-0.1 0.005-0.016 0.009-0.033 0.014-0.05 0.008-0.027 0.016-0.055 0.024-0.083 3.829-12.393 5.799-24.802 5.852-36.887 0.019-4.143-3.325-7.515-7.467-7.533-4.16,0-7.515,3.336-7.533,7.467-0.029,6.635-0.736,13.404-2.083,20.229l-44.66-44.66v-46.446c9.865,3.487 18.664,8.89 25.913,16.139 7.588,7.589 13.21,16.822 16.71,27.443 1.296,3.933 5.534,6.074 9.471,4.775 3.934-1.296 6.072-5.536 4.775-9.471-4.24-12.869-11.087-24.091-20.35-33.354-11.343-11.345-25.687-18.973-41.775-22.66-0.373-0.117-0.762-0.197-1.158-0.254-18.211-3.939-38.596-2.873-59.379,3.55-0.019,0.006-0.038,0.011-0.057,0.017-0.019,0.006-0.039,0.011-0.058,0.017-0.037,0.011-0.072,0.029-0.108,0.041-0.224,0.073-0.445,0.156-0.662,0.251-0.072,0.031-0.142,0.065-0.213,0.099-0.188,0.089-0.373,0.186-0.555,0.292-0.07,0.04-0.139,0.08-0.208,0.123-0.183,0.114-0.36,0.238-0.534,0.37-0.054,0.041-0.111,0.078-0.164,0.12-0.22,0.175-0.434,0.361-0.638,0.565-0.204,0.204-0.39,0.419-0.566,0.639-0.041,0.051-0.077,0.105-0.116,0.157-0.134,0.177-0.26,0.357-0.376,0.543-0.041,0.065-0.079,0.132-0.117,0.199-0.108,0.186-0.208,0.376-0.299,0.569-0.031,0.066-0.063,0.132-0.093,0.199-0.099,0.226-0.186,0.456-0.261,0.689-0.01,0.03-0.024,0.058-0.033,0.088-0.022,0.073-0.03,0.1-0.037,0.127-6.42,20.776-7.485,41.154-3.548,59.36zm48.829-8.58h-35.141c-1.592-10.684-1.262-22.189 1.081-34.059l34.06,34.059zm-15.306,40.914c-7.249-7.249-12.653-16.048-16.14-25.914h46.447l44.668,44.668c-29.65,5.852-57.043-0.822-74.975-18.754zm25.915-86.661v35.14l-34.06-34.06c11.87-2.342 23.375-2.672 34.06-1.08z"></path> <path d="m87.5,358.574h40.632c31.729,32.271 73.988,50 119.367,50 92.359,0 167.5-75.141 167.5-167.5v-80c0-4.143-3.357-7.5-7.5-7.5h-320c-4.143,0-7.5,3.357-7.5,7.5v22.814c-20.545,1.732-39.627,10.567-54.372,25.313-16.525,16.527-25.627,38.501-25.627,61.873s9.102,45.345 25.629,61.872c16.527,16.526 38.5,25.628 61.871,25.628zm-51.266-138.766c13.691-13.693 31.897-21.234 51.265-21.234 4.143,0 7.5-3.357 7.5-7.5v-22.5h305v72.5c0,84.089-68.411,152.5-152.5,152.5-42.304,0-81.631-16.925-110.737-47.657-1.416-1.496-3.386-2.343-5.445-2.343h-43.817c-19.364,0-37.57-7.541-51.265-21.235-13.694-13.694-21.235-31.9-21.235-51.265 0-19.366 7.541-37.572 21.234-51.266z"></path> <path d="m87.5,328.574h21.409c2.681,0 5.157-1.431 6.497-3.753 1.339-2.322 1.337-5.183-0.005-7.503-13.348-23.073-20.402-49.438-20.402-76.244v-20c0-4.143-3.357-7.5-7.5-7.5-15.359,0-29.799,5.981-40.658,16.841-10.86,10.86-16.841,25.3-16.841,40.659 0,15.358 5.981,29.798 16.842,40.659 10.86,10.859 25.3,16.841 40.658,16.841zm-30.052-87.553c6.229-6.229 14.053-10.287 22.551-11.792v11.845c0,25.169 5.665,49.986 16.473,72.5h-8.972c-11.352,0-22.024-4.421-30.051-12.448-8.028-8.028-12.449-18.701-12.449-30.052 0-11.353 4.421-22.025 12.448-30.053z"></path> <path d="m247.498,378.574c31.291,0 60.795-10.287 85.324-29.75 3.244-2.574 3.788-7.292 1.213-10.537-2.574-3.244-7.292-3.787-10.537-1.213-21.849,17.336-48.13,26.5-76,26.5-67.547,0-122.5-54.953-122.5-122.5l.001-42.204c9.815,0.83 15.565,3.307 22.03,6.092 8.282,3.568 17.67,7.612 35.466,7.612 17.797,0 27.185-4.044 35.467-7.612 7.958-3.428 14.829-6.388 29.532-6.388 14.704,0 21.576,2.96 29.534,6.388 8.282,3.568 17.671,7.612 35.468,7.612s27.185-4.044 35.468-7.611c6.467-2.786 12.217-5.263 22.035-6.093l-.001,42.204c0,27.871-9.164,54.151-26.5,76-2.575,3.245-2.031,7.963 1.213,10.537 3.244,2.575 7.962,2.031 10.537-1.213 19.463-24.528 29.75-54.033 29.75-85.324l.001-50c0-1.989-0.79-3.896-2.196-5.304-1.407-1.406-3.314-2.196-5.304-2.196-17.798,0-27.186,4.044-35.469,7.612-7.958,3.428-14.83,6.388-29.534,6.388s-21.576-2.96-29.534-6.388c-8.282-3.568-17.671-7.612-35.468-7.612-17.796,0-27.184,4.044-35.466,7.612-7.958,3.428-14.83,6.388-29.533,6.388-14.702,0-21.574-2.96-29.53-6.388-8.282-3.568-17.67-7.612-35.466-7.612-4.142,0-7.5,3.357-7.5,7.5l-.001,50c-9.9476e-14,75.817 61.683,137.5 137.5,137.5z"></path> <path d="m462.5,419.924h-430c-4.143,0-7.5,3.357-7.5,7.5s3.357,7.5 7.5,7.5h4.342l4.326,15.138c3.182,11.138 14.748,19.862 26.332,19.862h360c11.584,0 23.15-8.725 26.333-19.862l4.325-15.138h4.342c4.143,0 7.5-3.357 7.5-7.5s-3.357-7.5-7.5-7.5zm-23.09,26.016c-1.344,4.701-7.021,8.983-11.91,8.983h-360c-4.89,0-10.566-4.282-11.909-8.983l-3.147-11.017h390.114l-3.148,11.017z"></path> </g> </g></svg>
                 </div>
                 <p className="mx-auto max-w-[700px] text-amber-700 md:text-xl italic">
                 &quot;Every cup of tea is a journey through flavors and aromas.&quot;
@@ -375,6 +420,7 @@ export function EnhancedTeaLandingPage() {
               tea={selectedTea} 
               isOpen={!!selectedTea} 
               setIsOpen={(isOpen: boolean) => !isOpen && setSelectedTea(null)} 
+              addToCart={addToCart}
             />
           )}
         </section>
@@ -451,8 +497,8 @@ export function EnhancedTeaLandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="text-center md:text-left">
               <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
-              <p className="text-sm mb-2">Phone: +91 8778635551</p>
-              <p className="text-sm">Email: sreerajalakshmienterprisestea@gmail.com</p>
+              <p className="text-sm mb-2">Phone: <a href="tel:+918778635551">+91 8778635551</a></p>
+              <p className="text-sm">Email: <a href="mailto:sreerajalakshmienterprisestea@gmail.com">sreerajalakshmienterprisestea@gmail.com</a></p>
             </div>
             <div className="text-center ml-10">
               <h3 className="text-xl font-semibold mb-4">Visit Us</h3>
@@ -566,6 +612,15 @@ export function EnhancedTeaLandingPage() {
           transform: scale(1.1);
         }
       `}</style>
+      {selectedTea && (
+        <TeaModal 
+          tea={selectedTea} 
+          isOpen={!!selectedTea} 
+          setIsOpen={(isOpen: boolean) => !isOpen && setSelectedTea(null)} 
+          addToCart={addToCart}
+        />
+      )}
     </div>
+
   )
 }
