@@ -35,7 +35,8 @@ export function useCart() {
           retailPrice: tea.retailPrice,
           wholesalePrice: tea.wholesalePrice,
           image: tea.image,
-          longDescription: tea.longDescription
+          longDescription: tea.longDescription,
+          quantity: tea.quantity || 1
         }),
       });
       if (response.ok) {

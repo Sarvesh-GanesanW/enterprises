@@ -1,7 +1,7 @@
 'use client'
 
 import * as Collapsible from '@radix-ui/react-collapsible';
-import { ShoppingBagIcon, InformationCircleIcon, EnvelopeIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { ShoppingBagIcon, InformationCircleIcon, EnvelopeIcon, ChevronDownIcon, ChevronUpIcon, PlusIcon, MinusIcon } from '@heroicons/react/24/outline';
 import { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { CardContent, Card } from "@/components/ui/card";
@@ -11,30 +11,51 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import Image from 'next/image';
+import { useCart } from '@/hooks/useCart';
+import { Tea } from '@/types/tea';
+
 
 const API_URL = 'https://sretea.onrender.com/api';
 
-const TeaModal = ({ tea, isOpen, setIsOpen, addToCart }: { tea: Tea, isOpen: boolean, setIsOpen: (isOpen: boolean) => void, addToCart: (tea: Tea) => void }) => (
-  <Dialog open={isOpen} onOpenChange={setIsOpen}>
-    <DialogContent className="sm:max-w-[425px]">
-      <DialogHeader>
-        <DialogTitle>{tea.title}</DialogTitle>
-      </DialogHeader>
-      <div className="grid gap-4 py-4">
-        <Image src={tea.image} alt={tea.title} width={400} height={200} className="w-full h-48 object-cover rounded-lg" />
-        <p className="text-sm text-gray-500">{tea.longDescription}</p>
-        <div className="space-y-2">
-          <p className="text-center font-medium">Retail: {tea.retailPrice}</p>
-          <p className="text-center font-medium">Wholesale: {tea.wholesalePrice}</p>
+const TeaModal = ({ tea, isOpen, setIsOpen, addToCart }: { tea: Tea, isOpen: boolean, setIsOpen: (isOpen: boolean) => void, addToCart: (tea: Tea, quantity: number) => void }) => {
+  const [quantity, setQuantity] = useState(1);
+
+  const incrementQuantity = () => setQuantity(prev => prev + 1);
+  const decrementQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
+
+  const handleAddToCart = () => {
+    addToCart(tea, quantity);
+    setIsOpen(false);
+    setQuantity(1); 
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{tea.title}</DialogTitle>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <Image src={tea.image} alt={tea.title} width={400} height={200} className="w-full h-48 object-cover rounded-lg" />
+          <p className="text-sm text-gray-500">{tea.longDescription}</p>
+          <div className="space-y-2">
+            <p className="text-center font-medium">Retail: {tea.retailPrice}</p>
+            <p className="text-center font-medium">Wholesale: {tea.wholesalePrice}</p>
+          </div>
+          <div className="flex items-center justify-center space-x-2">
+            <Button onClick={decrementQuantity} className="bg-gray-300 hover:bg-gray-400 text-black">-</Button>
+            <span>{quantity}</span>
+            <Button onClick={incrementQuantity} className="bg-gray-300 hover:bg-gray-400 text-black">+</Button>
+          </div>
         </div>
-      </div>
-      <div className="flex space-x-2">
-        <Button onClick={() => addToCart(tea)} className="flex-1 bg-green-600 hover:bg-green-700 text-white">Add to Cart</Button>
-        <Button onClick={() => setIsOpen(false)} className="flex-1 bg-amber-600 hover:bg-amber-700 text-white">Close</Button>
-      </div>
-    </DialogContent>
-  </Dialog>
-)
+        <div className="flex space-x-2">
+          <Button onClick={handleAddToCart} className="flex-1 bg-green-600 hover:bg-green-700 text-white">Add to Cart</Button>
+          <Button onClick={() => setIsOpen(false)} className="flex-1 bg-amber-600 hover:bg-amber-700 text-white">Close</Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 type ContactFormData = {
   fullName: string;
@@ -51,14 +72,6 @@ type OrderFormData = {
   needSample: boolean;
 };
 
-type Tea = {
-  title: string;
-  description: string;
-  retailPrice: string;
-  wholesalePrice: string;
-  image: string;
-  longDescription: string;
-};
 
 export function EnhancedTeaLandingPage() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
@@ -66,43 +79,14 @@ export function EnhancedTeaLandingPage() {
   const aboutUsRef = useRef<HTMLElement>(null);
   const [selectedTea, setSelectedTea] = useState<Tea | null>(null)
   const [isFactsOpen, setIsFactsOpen] = useState(false);
-  const [cart, setCart] = useState<Tea[]>([]);
-
+  const { cart, addToCart, removeFromCart, fetchCart } = useCart();
+  const handleAddToCart = (tea: Tea, quantity: number) => {
+    addToCart({ ...tea, quantity });
+  };
 
   useEffect(() => {
     fetchCart();
-  }, []);
-
-  const fetchCart = async () => {
-    try {
-      const response = await fetch(`${API_URL}/cart`);
-      if (response.ok) {
-        const cartData = await response.json();
-        setCart(cartData);
-      }
-    } catch (error) {
-      console.error('Error fetching cart:', error);
-    }
-  };
-
-
-  const addToCart = async (tea: Tea) => {
-    try {
-      const response = await fetch(`${API_URL}/cart`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(tea),
-      });
-      if (response.ok) {
-        fetchCart();
-        setSelectedTea(null);
-      }
-    } catch (error) {
-      console.error('Error adding to cart:', error);
-    }
-  };
+  }, [fetchCart]);
 
   const scrollToProducts = () => {
     productsRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -374,6 +358,7 @@ export function EnhancedTeaLandingPage() {
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {[
                 {
+                  id: 1,
                   title: "Premium Tea",
                   description: "Exquisite blends for the discerning tea connoisseur.",
                   retailPrice: "₹250/100g",
@@ -382,6 +367,7 @@ export function EnhancedTeaLandingPage() {
                   longDescription: "Our Premium Tea is a luxurious blend of the finest tea leaves, carefully selected from the most renowned tea gardens. This exquisite tea offers a rich, full-bodied flavor with subtle notes of oak and a hint of sweetness. Perfect for those special moments when only the best will do."
                 },
                 {
+                  id: 2,
                   title: "Classic Tea",
                   description: "Our everyday blends for a perfect cup anytime, anywhere.",
                   retailPrice: "₹180/100g",
@@ -390,12 +376,13 @@ export function EnhancedTeaLandingPage() {
                   longDescription: "The Classic Tea is our signature blend, offering a balanced and refreshing taste that is perfect for any time of day. With its smooth flavor and satisfying aroma, this tea is a staple for tea lovers who appreciate consistency and quality in every cup."
                 },
                 {
+                  id: 3,
                   title: "Therapeutic Tea",
                   description: "Specially crafted blends for health and wellness.",
                   retailPrice: "₹230/100g",
                   wholesalePrice: "₹200/100g (MOQ: 5kg)",
                   image: "/images/therapeutic-tea.jpg",
-                  longDescription: "Our Therapeutic Tea is a carefully crafted blend designed to promote health and wellness. Infused with natural herbs and spices known for their healing properties, this tea offers a soothing and rejuvenating experience. It&apos;s the perfect choice for those looking to incorporate the benefits of traditional herbal remedies into their daily routine."
+                  longDescription: "Our Therapeutic Tea is a carefully crafted blend designed to promote health and wellness. Infused with natural herbs and spices known for their healing properties, this tea offers a soothing and rejuvenating experience. It's the perfect choice for those looking to incorporate the benefits of traditional herbal remedies into their daily routine."
                 }
               ].map((product, index) => (
                 <Card key={index} className="bg-amber-50 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
@@ -415,11 +402,11 @@ export function EnhancedTeaLandingPage() {
             </div>
           </div>
           {selectedTea && (
-                        <TeaModal 
+            <TeaModal 
               tea={selectedTea} 
               isOpen={!!selectedTea} 
               setIsOpen={(isOpen: boolean) => !isOpen && setSelectedTea(null)} 
-              addToCart={addToCart}
+              addToCart={handleAddToCart}
             />
           )}
         </section>
@@ -611,14 +598,6 @@ export function EnhancedTeaLandingPage() {
           transform: scale(1.1);
         }
       `}</style>
-      {selectedTea && (
-        <TeaModal 
-          tea={selectedTea} 
-          isOpen={!!selectedTea} 
-          setIsOpen={(isOpen: boolean) => !isOpen && setSelectedTea(null)} 
-          addToCart={addToCart}
-        />
-      )}
     </div>
 
   )
