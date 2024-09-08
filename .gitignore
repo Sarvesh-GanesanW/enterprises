@@ -76,3 +76,25 @@ Thumbs.db
 *.tmp
 *.temp
 .next
+
+# Custom project relevant ignores
+# Ignore API keys and secrets
+api-keys.json
+secrets.json
+
+# Ignore build artifacts
+/dist
+/build
+
+# Ignore local development files
+local-settings.json
+local-config.json
+
+# Ignore custom temporary files
+*.cache
+*.bak
+*.backup
+
+# Ignore Next.js server reference manifest files
+server-reference-manifest.js
+server-reference-manifest.json

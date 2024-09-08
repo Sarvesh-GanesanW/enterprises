@@ -2,7 +2,6 @@
 
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { ShoppingBagIcon, InformationCircleIcon, EnvelopeIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
-import { CustomDialogContent } from "@/components/ui/custom-dialog";
 import { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { CardContent, Card } from "@/components/ui/card";
