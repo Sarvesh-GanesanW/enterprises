@@ -16,15 +16,14 @@ import { Tea } from '@/types/tea';
 
 
 const API_URL = 'https://sretea.onrender.com/api';
-
 const TeaModal = ({ tea, isOpen, setIsOpen, addToCart }: { tea: Tea, isOpen: boolean, setIsOpen: (isOpen: boolean) => void, addToCart: (tea: Tea, quantity: number) => void }) => {
   const [quantity, setQuantity] = useState(1);
 
   const incrementQuantity = () => setQuantity(prev => prev + 1);
   const decrementQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
 
-  const handleAddToCart = () => {
-    addToCart(tea, quantity);
+  const handleAddToCart = async () => {
+    await addToCart({ ...tea, quantity: quantity }, quantity);
     setIsOpen(false);
     setQuantity(1); 
   };
@@ -49,7 +48,9 @@ const TeaModal = ({ tea, isOpen, setIsOpen, addToCart }: { tea: Tea, isOpen: boo
           </div>
         </div>
         <div className="flex space-x-2">
-          <Button onClick={handleAddToCart} className="flex-1 bg-green-600 hover:bg-green-700 text-white">Add to Cart</Button>
+          <Button onClick={handleAddToCart} className="flex-1 bg-green-600 hover:bg-green-700 text-white">
+            Add to Cart ({quantity})
+          </Button>
           <Button onClick={() => setIsOpen(false)} className="flex-1 bg-amber-600 hover:bg-amber-700 text-white">Close</Button>
         </div>
       </DialogContent>
@@ -80,9 +81,6 @@ export function EnhancedTeaLandingPage() {
   const [selectedTea, setSelectedTea] = useState<Tea | null>(null)
   const [isFactsOpen, setIsFactsOpen] = useState(false);
   const { cart, addToCart, removeFromCart, fetchCart } = useCart();
-  const handleAddToCart = (tea: Tea, quantity: number) => {
-    addToCart({ ...tea, quantity });
-  };
 
   useEffect(() => {
     fetchCart();
@@ -228,7 +226,7 @@ export function EnhancedTeaLandingPage() {
       <Link href="/cart" className="fixed top-4 right-4 z-50">
         <Button className="bg-amber-600 hover:bg-amber-700 text-white rounded-full px-4 py-2">
           <ShoppingBagIcon className="h-6 w-6 mr-2" />
-          Cart ({cart.length})
+          Cart ({cart.reduce((total, item) => total + (item.quantity || 1), 0)})
         </Button>
       </Link>
       <main className="flex-1">
@@ -406,7 +404,7 @@ export function EnhancedTeaLandingPage() {
               tea={selectedTea} 
               isOpen={!!selectedTea} 
               setIsOpen={(isOpen: boolean) => !isOpen && setSelectedTea(null)} 
-              addToCart={handleAddToCart}
+              addToCart={addToCart}
             />
           )}
         </section>

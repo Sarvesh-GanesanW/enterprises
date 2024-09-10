@@ -29,15 +29,7 @@ export function useCart() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          title: tea.title,
-          description: tea.description,
-          retailPrice: tea.retailPrice,
-          wholesalePrice: tea.wholesalePrice,
-          image: tea.image,
-          longDescription: tea.longDescription,
-          quantity: tea.quantity || 1
-        }),
+        body: JSON.stringify(tea),
       });
       if (response.ok) {
         await fetchCart();
@@ -60,5 +52,22 @@ export function useCart() {
     }
   };
 
-  return { cart, addToCart, removeFromCart, fetchCart };
+  const updateCartItemQuantity = async (itemId: number, newQuantity: number) => {
+    try {
+      const response = await fetch(`${API_URL}/cart/${itemId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ quantity: newQuantity }),
+      });
+      if (response.ok) {
+        await fetchCart();
+      }
+    } catch (error) {
+      console.error('Error updating cart item quantity:', error);
+    }
+  };
+
+  return { cart, addToCart, removeFromCart, fetchCart, updateCartItemQuantity };
 }
